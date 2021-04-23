@@ -24,24 +24,29 @@ void bitmap::retrieve_bitmap_data()
         char* w_b   = new char[1]; // 2-byte buffer
         char* dw_b  = new char[3]; // 4-byte buffer
 
+        // Below, sizeof(char)*4 is used frequently.
+        // On my system, char is 1 byte, but an array
+        // of 4 char's is 8 bytes, so, sizeof(dw_b) would
+        // cause problems.
+
         file.seekg                   (0x02, ios::beg);
-        file.read                    (dw_b, sizeof(dw_b));
+        file.read                    (dw_b, sizeof(char)*4);
         this->set_file_size          ((uint8_t)dw_b[3] << 24 | (uint8_t)dw_b[2] << 16 | (uint8_t)dw_b[1] << 8 | (uint8_t)dw_b[0]);
 
         file.seekg                   (0x04, ios::cur);
-        file.read                    (dw_b, sizeof(dw_b));
+        file.read                    (dw_b, sizeof(char)*4);
         this->set_pixel_data_offset  ((uint8_t)dw_b[3] << 24 | (uint8_t)dw_b[2] << 16 | (uint8_t)dw_b[1] << 8 | (uint8_t)dw_b[0]);
 
         file.seekg                   (0x04, ios::cur);
-        file.read                    (dw_b, sizeof(dw_b));
+        file.read                    (dw_b, sizeof(char)*4);
         this->set_image_width        ((uint8_t)dw_b[3] << 24 | (uint8_t)dw_b[2] << 16 | (uint8_t)dw_b[1] << 8 | (uint8_t)dw_b[0]);
 
         file.seekg                   (0x00, ios::cur);
-        file.read                    (dw_b, sizeof(dw_b));
+        file.read                    (dw_b, sizeof(char)*4);
         this->set_image_height       ((uint8_t)dw_b[3] << 24 | (uint8_t)dw_b[2] << 16 | (uint8_t)dw_b[1] << 8 | (uint8_t)dw_b[0]);
 
         file.seekg                   (0x02, ios::cur);
-        file.read                    (w_b, sizeof(w_b));
+        file.read                    (w_b, sizeof(char)*4);
         this->set_bits_per_pixel     ((uint8_t)w_b[1] << 8 | (uint8_t)w_b[0]);
 
         delete[] w_b;
